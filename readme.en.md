@@ -14,7 +14,7 @@
 ## How to enable
 
 1. Install the plugin to the plugin directory.
-2. Add ```--encrypt-pass=your_password``` to the startup parameters.
+2. Add ```--enc-pw=your_password``` to the startup parameters.
 
 ## How to use the batch decryption script
 
