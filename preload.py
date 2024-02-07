@@ -1,3 +1,4 @@
 
 def preload(parser):
-    parser.add_argument("--encrypt-pass", type=str, help="The password to enable image encryption.", default=None)
+    parser.add_argument("--enc-pw", type=str, help="The password to enable image encryption.", default=None)
+    encrypt_pass = enc_pw
