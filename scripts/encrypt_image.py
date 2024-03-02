@@ -14,6 +14,7 @@ from fastapi import FastAPI
 from gradio import Blocks
 from fastapi import FastAPI, Request, Response
 import sys
+import gradio as gr
 
 repo_dir = md_scripts.basedir()
 password = getattr(shared.cmd_opts, 'enc_pw', None)
@@ -79,7 +80,7 @@ if PILImage.Image.__name__ != 'EncryptedImage':
             pnginfo.add_text('EncryptPwdSha', get_sha256(f'{get_sha256(password)}Encrypt'))
             for key in (self.info or {}).keys():
                 if self.info[key]:
-                    pnginfo.add_text(key,self.info[key])
+                    pnginfo.add_text(key,str(self.info[key]))
             params.update(pnginfo=pnginfo)
             super().save(fp, format=self.format, **params)
             # 保存到文件后解密内存内的图片，让直接在内存内使用时图片正常
@@ -170,9 +171,24 @@ def on_app_started(demo: Optional[Blocks], app: FastAPI):
                     return response
         res: Response = await call_next(req)
         return res
+    
+    # 传递插件状态到前端
+    section = ("encrypt_image_is_enable",'图片加密' if shared.opts.localization == 'zh_CN' else "encrypt image" )
+    option = shared.OptionInfo(
+            default="是",
+            label='是否启用了加密插件' if shared.opts.localization == 'zh_CN' else "Whether the encryption plug-in is enabled",
+            section=section,
+        )
+    option.do_not_save = True
+    shared.opts.add_option(
+        "encrypt_image_is_enable",
+        option,
+    )
+    shared.opts.data['encrypt_image_is_enable'] = "是"
 
 if password:
     script_callbacks.on_app_started(on_app_started)
     print('图片加密已经启动 加密方式 2')
+   
 else:
     print('图片加密插件已安装，但缺少密码参数未启动')
